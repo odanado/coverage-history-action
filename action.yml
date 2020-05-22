@@ -1,0 +1,6 @@
+name: 'Coverage history action'
+description: 'Coverage history action'
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
