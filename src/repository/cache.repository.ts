@@ -63,7 +63,10 @@ export class CacheRepository implements Repository {
     await this.save(branch, value);
   }
   async loadCoverage(branch: string): Promise<CoverageResult | undefined> {
-    const value = await this.load(branch);
+    const value = await this.load(branch).catch((e) => {
+      logger.debug(e);
+      return undefined;
+    });
     if (value) {
       return value as CoverageResult;
     }
