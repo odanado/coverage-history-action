@@ -8,7 +8,7 @@ on:
 
 
 jobs:
-  build:
+  report:
     runs-on: ubuntu-latest
 
     strategy:
@@ -37,3 +37,4 @@ jobs:
       id: coverage-history-action
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+

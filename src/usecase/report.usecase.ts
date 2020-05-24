@@ -16,6 +16,9 @@ export class ReportUsecase {
     const targetCoverage = await this.repository.loadCoverage(targetBranch);
     const currentCoverage = await this.repository.loadCoverage(currentBranch);
 
+    console.log({ targetCoverage });
+    console.log({ currentCoverage });
+
     if (!targetCoverage) return;
     if (!currentCoverage) return;
 
