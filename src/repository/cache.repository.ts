@@ -27,36 +27,31 @@ export class CacheRepository implements Repository {
     cache: CoverageResult | undefined
   ): Promise<void> {
     const directory = this.getDirectory();
-    const key = this.getKey();
+    const baseKey = this.getKey();
     const fileName = this.getFileName();
-    logger.debug(
-      `save ${JSON.stringify({ branch, key, directory, fileName })}`
-    );
 
     await fs.promises.mkdir(directory, { recursive: true });
-
     const data = JSON.stringify({ ...cache, [branch]: value });
-    logger.debug(`data: ${data}`);
-
     fs.promises.writeFile(fileName, data);
 
     const runId = process.env.GITHUB_RUN_ID;
-    saveCache([fileName], `${key}-${runId}`);
+    const key = `${baseKey}-${runId}`;
+    saveCache([fileName], key);
+
+    logger.info(`save to cache key: ${key}`);
   }
 
   async load(branch: string): Promise<unknown> {
     const key = this.getKey();
-    const directory = this.getDirectory();
     const fileName = this.getFileName();
-    logger.debug(
-      `load ${JSON.stringify({ branch, key, directory, fileName })}`
-    );
 
     const cacheHit = await restoreCache([fileName], key, [key]);
 
-    logger.debug(`cacheHit ${JSON.stringify({ cacheHit })}`);
+    logger.debug({ cacheHit });
 
     if (!cacheHit) return;
+
+    logger.info("cache hit");
     const value = await fs.promises.readFile(fileName, {
       encoding: "utf8",
     });
@@ -71,8 +66,6 @@ export class CacheRepository implements Repository {
   async saveCoverage(branch: string, value: CoverageResult): Promise<void> {
     const cache = await this.loadCoverage(branch);
     await this.save(branch, value, cache);
-
-    await this.loadCoverage(branch);
   }
   async loadCoverage(branch: string): Promise<CoverageResult | undefined> {
     const value = await this.load(branch).catch((e) => {
