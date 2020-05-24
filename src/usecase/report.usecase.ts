@@ -24,13 +24,12 @@ export class ReportUsecase {
 
     const report = await this.reporter.report(targetCoverage, currentCoverage);
 
-    const commitCommentParams = {
+    await this.client.issues.createComment({
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      issue_number: context.issue.number,
       owner: context.repo.owner,
       repo: context.repo.repo,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      commit_sha: context.sha,
       body: report,
-    };
-    await this.client.repos.createCommitComment(commitCommentParams);
+    });
   }
 }
