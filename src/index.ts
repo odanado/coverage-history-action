@@ -3,7 +3,7 @@ import { context, GitHub } from "@actions/github";
 
 import { IstanbulLoader } from "./loader/istanbul.loader";
 import { TextReporter } from "./reporter/text.reporter";
-import { StateRepository } from "./repository/state.repository";
+import { CacheRepository } from "./repository/cache.repository";
 
 import { ReportUsecase } from "./usecase/report.usecase";
 import { StoreUsecase } from "./usecase/store.usecase";
@@ -29,7 +29,7 @@ function loadInputs(): Inputs {
 async function main(): Promise<void> {
   const inputs = loadInputs();
   const loader = new IstanbulLoader(inputs.COVERAGE_DIR);
-  const repository = new StateRepository();
+  const repository = new CacheRepository();
 
   const reporter = new TextReporter();
 
