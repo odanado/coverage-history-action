@@ -1,0 +1,39 @@
+name: dogfooding
+
+
+on:
+  push:
+    branches:
+      - "**"
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: yarn install
+      run: |
+        yarn install --frozen-lockfile
+      env:
+        CI: true
+    - name: Run test
+      run: |
+        yarn test --coverage
+      env:
+        CI: true
+    - name: Run build
+      run: yarn build
+    - uses: ./
+      id: coverage-history-action
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
