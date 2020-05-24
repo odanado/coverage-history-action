@@ -49,6 +49,8 @@ export class ArtifactRepository implements Repository {
 
     const { downloadPath } = await this.artifactClient.downloadArtifact(key);
 
+    logger.debug(`${JSON.stringify({ downloadPath })}`);
+
     const value = await fs.promises.readFile(downloadPath, {
       encoding: "utf8",
     });
