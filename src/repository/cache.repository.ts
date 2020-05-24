@@ -11,6 +11,7 @@ export class CacheRepository implements Repository {
   }
 
   private getfileName(branch: string): string {
+    console.log("filename", this.getDirectory(), branch);
     return path.join(this.getDirectory(), `${branch}.json`);
   }
 
@@ -25,7 +26,6 @@ export class CacheRepository implements Repository {
 
     await fs.promises.mkdir(directory, { recursive: true });
 
-    console.log("filename", this.getfileName(branch));
     fs.promises.writeFile(this.getfileName(branch), JSON.stringify(value));
 
     const runId = process.env.GITHUB_RUN_ID;
