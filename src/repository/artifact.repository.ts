@@ -52,7 +52,7 @@ export class ArtifactRepository implements Repository {
       `load ${JSON.stringify({ branch, key, directory, fileName })}`
     );
 
-    const cacheHit = restoreCache([fileName], key, [key]);
+    const cacheHit = await restoreCache([fileName], key, [key]);
 
     logger.debug(`cacheHit ${JSON.stringify({ cacheHit })}`);
 
