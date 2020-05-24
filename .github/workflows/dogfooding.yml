@@ -39,6 +39,3 @@ jobs:
       id: coverage-history-action
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v2
