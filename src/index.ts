@@ -27,20 +27,20 @@ function loadInputs(): Inputs {
   };
 }
 
-function getMode(context: Context): string | undefined {
-  if (context.eventName === "pull_request") {
-    return "report";
-  }
-  if (context.eventName === "push") {
-    return "store";
-  }
-}
-
 function getBranch(context: Context): string {
   if (process.env.GITHUB_HEAD_REF) {
     return process.env.GITHUB_HEAD_REF;
   }
   return context.ref.split("/")[2];
+}
+
+function getMode(context: Context): string | undefined {
+  if (context.eventName === "pull_request") {
+    return "report";
+  }
+  if (context.eventName === "push" && getBranch(context) === "master") {
+    return "store";
+  }
 }
 
 async function main(): Promise<void> {
@@ -56,8 +56,6 @@ async function main(): Promise<void> {
   const reportUsecase = new ReportUsecase(loader, reporter, repository, client);
   const storeUsecase = new StoreUsecase(loader, repository);
 
-  const currentBranch = getBranch(context);
-  console.log({ currentBranch });
   const mode = getMode(context);
   switch (mode) {
     case "store":
