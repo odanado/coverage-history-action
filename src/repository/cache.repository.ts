@@ -9,7 +9,7 @@ export class CacheRepository implements Repository {
   private getDirectory(): string {
     return ".coverage-history";
   }
-  private getFileNmae(branch: string) {
+  private getFileNmae(branch: string): string {
     return path.join(this.getDirectory(), `${branch}.json`);
   }
   async save(branch: string, value: unknown): Promise<void> {

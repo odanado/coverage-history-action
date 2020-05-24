@@ -1,5 +1,6 @@
 import { getInput } from "@actions/core";
 import { context, GitHub } from "@actions/github";
+import { Context } from "@actions/github/lib/context";
 
 import { IstanbulLoader } from "./loader/istanbul.loader";
 import { TextReporter } from "./reporter/text.reporter";
@@ -26,6 +27,19 @@ function loadInputs(): Inputs {
   };
 }
 
+function getMode(context: Context): string | undefined {
+  if (context.eventName === "pull_request") {
+    return "report";
+  }
+  if (context.eventName === "push") {
+    return "store";
+  }
+}
+
+function getBranch(context: Context): string {
+  return context.ref.split("/")[2];
+}
+
 async function main(): Promise<void> {
   const inputs = loadInputs();
   const loader = new IstanbulLoader(inputs.COVERAGE_DIR);
@@ -38,8 +52,16 @@ async function main(): Promise<void> {
   const reportUsecase = new ReportUsecase(reporter, repository, client);
   const storeUsecase = new StoreUsecase(loader, repository);
 
-  await storeUsecase.storeCoverage(inputs.TARGET);
-  await reportUsecase.report(inputs.TARGET, inputs.TARGET);
+  const currentBranch = getBranch(context);
+  const mode = getMode(context);
+  switch (mode) {
+    case "store":
+      await storeUsecase.storeCoverage(currentBranch);
+      break;
+    case "report":
+      await reportUsecase.report(inputs.TARGET, currentBranch);
+      break;
+  }
 }
 
 if (!module.parent) {
