@@ -22,7 +22,7 @@
     "build": "tsc -p tsconfig.build.json",
     "test": "run-p test:*",
     "test:build": "yarn build --noEmit",
-    "test:jest": "yarn jest --detectOpenHandles --forceExit",
+    "test:jest": "yarn jest --detectOpenHandles --forceExit --coverage",
     "test:lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
   },
   "dependencies": {
