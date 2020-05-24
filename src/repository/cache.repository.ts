@@ -7,7 +7,7 @@ import { logger } from "../logger";
 import { CoverageResult } from "../type";
 import { Repository } from "./index";
 
-export class ArtifactRepository implements Repository {
+export class CacheRepository implements Repository {
   private getDirectory(): string {
     return ".coverage-history";
   }
