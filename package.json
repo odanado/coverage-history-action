@@ -24,5 +24,9 @@
     "test:build": "yarn build --noEmit",
     "test:jest": "yarn jest --detectOpenHandles --forceExit",
     "test:lint": "eslint --ext .js,.ts --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^2.2.0"
   }
 }
