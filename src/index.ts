@@ -4,7 +4,7 @@ import { Context } from "@actions/github/lib/context";
 
 import { IstanbulLoader } from "./loader/istanbul.loader";
 import { TextReporter } from "./reporter/text.reporter";
-import { CacheRepository } from "./repository/cache.repository";
+import { ArtifactRepository } from "./repository/artifact.repository";
 
 import { ReportUsecase } from "./usecase/report.usecase";
 import { StoreUsecase } from "./usecase/store.usecase";
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   console.log("env", process.env);
   const inputs = loadInputs();
   const loader = new IstanbulLoader(inputs.COVERAGE_DIR);
-  const repository = new CacheRepository();
+  const repository = new ArtifactRepository();
 
   const reporter = new TextReporter();
 
