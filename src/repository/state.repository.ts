@@ -10,6 +10,7 @@ export class StateRepository implements Repository {
 
   async load(key: string): Promise<unknown> {
     const value = getState(key);
+    console.log("load", key, value);
     try {
       return JSON.parse(value);
     } catch {
