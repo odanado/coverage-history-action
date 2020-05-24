@@ -34,9 +34,9 @@ export class CacheRepository implements Repository {
   }
 
   async load(branch: string): Promise<unknown> {
-    console.log("load", branch);
     const key = this.getKey();
     const directory = this.getDirectory();
+    console.log("load", branch, key, directory);
 
     const cacheHit = restoreCache([directory], key, [key]);
 
