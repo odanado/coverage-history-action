@@ -24,6 +24,6 @@ export class StateRepository implements Repository {
   }
   async loadCoverage(branch: string): Promise<CoverageResult> {
     const key = this.getKey(branch);
-    return this.load(key);
+    return (await this.load(key)) as CoverageResult;
   }
 }
