@@ -1,11 +1,17 @@
 import fs from "fs";
-import { saveCache, restoreCache } from "@actions/cache";
+import { create, ArtifactClient } from "@actions/artifact";
 
 import { logger } from "../logger";
 import { CoverageResult } from "../type";
 import { Repository } from "./index";
 
-export class CacheRepository implements Repository {
+export class ArtifactRepository implements Repository {
+  private readonly artifactClient: ArtifactClient;
+
+  constructor() {
+    this.artifactClient = create();
+  }
+
   private getDirectory(): string {
     return ".coverage-history";
   }
@@ -15,13 +21,14 @@ export class CacheRepository implements Repository {
   }
 
   private getKey(): string {
-    const key = ["coverage-history-action", "directory"].join(":");
+    const key = ["coverage-history-action"].join(":");
     return key;
   }
 
   async save(branch: string, value: unknown): Promise<void> {
     const directory = this.getDirectory();
     const key = this.getKey();
+    const fileName = this.getfileName();
     logger.debug(`save ${JSON.stringify({ branch, key, directory })}`);
 
     await fs.promises.mkdir(directory, { recursive: true });
@@ -30,11 +37,9 @@ export class CacheRepository implements Repository {
     const data = JSON.stringify({ ...cache, [branch]: value });
     logger.debug(`data: ${data}`);
 
-    fs.promises.writeFile(this.getfileName(), data);
+    fs.promises.writeFile(fileName, data);
 
-    const runId = process.env.GITHUB_RUN_ID;
-
-    await saveCache([directory], `${key}-${runId}`);
+    await this.artifactClient.uploadArtifact(key, [fileName], process.cwd());
   }
 
   async load(branch: string): Promise<unknown> {
@@ -42,15 +47,11 @@ export class CacheRepository implements Repository {
     const directory = this.getDirectory();
     logger.debug(`load ${JSON.stringify({ branch, key, directory })}`);
 
-    const cacheHit = restoreCache([directory], key, [key]);
+    const { downloadPath } = await this.artifactClient.downloadArtifact(key);
 
-    if (!cacheHit) {
-      return undefined;
-    }
-
-    const fileName = this.getfileName();
-    logger.debug((await fs.promises.readdir(this.getDirectory())).join("\n"));
-    const value = await fs.promises.readFile(fileName, { encoding: "utf8" });
+    const value = await fs.promises.readFile(downloadPath, {
+      encoding: "utf8",
+    });
 
     try {
       return JSON.parse(value);
