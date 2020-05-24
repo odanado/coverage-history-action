@@ -43,6 +43,7 @@ function getBranch(context: Context): string {
 }
 
 async function main(): Promise<void> {
+  console.log("env", process.env);
   const inputs = loadInputs();
   const loader = new IstanbulLoader(inputs.COVERAGE_DIR);
   const repository = new CacheRepository();

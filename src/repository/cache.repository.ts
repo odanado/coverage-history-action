@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { saveCache, restoreCache } from "@actions/cache";
-import { context } from "@actions/github";
 
 import { CoverageResult } from "../type";
 import { Repository } from "./index";
