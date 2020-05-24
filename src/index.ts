@@ -53,18 +53,18 @@ async function main(): Promise<void> {
 
   const client = new GitHub(inputs.GITHUB_TOKEN);
 
-  const reportUsecase = new ReportUsecase(reporter, repository, client);
+  const reportUsecase = new ReportUsecase(loader, reporter, repository, client);
   const storeUsecase = new StoreUsecase(loader, repository);
 
   const currentBranch = getBranch(context);
+  console.log({ currentBranch });
   const mode = getMode(context);
   switch (mode) {
     case "store":
-      await storeUsecase.storeCoverage(currentBranch);
+      await storeUsecase.storeCoverage(inputs.TARGET);
       break;
     case "report":
-      await storeUsecase.storeCoverage(currentBranch);
-      await reportUsecase.report(inputs.TARGET, currentBranch);
+      await reportUsecase.report(inputs.TARGET);
       break;
   }
 }
