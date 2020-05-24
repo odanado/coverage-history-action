@@ -17,16 +17,16 @@ export class Logger {
     ].join(" ");
   }
   debug(message?: unknown, ...optionalParams: unknown[]): void {
-    core.debug(this.build(message, optionalParams));
+    core.debug(this.build(message, ...optionalParams));
   }
   error(message?: unknown, ...optionalParams: unknown[]): void {
-    core.error(this.build(message, optionalParams));
+    core.error(this.build(message, ...optionalParams));
   }
   warning(message?: unknown, ...optionalParams: unknown[]): void {
-    core.warning(this.build(message, optionalParams));
+    core.warning(this.build(message, ...optionalParams));
   }
   info(message?: unknown, ...optionalParams: unknown[]): void {
-    core.info(this.build(message, optionalParams));
+    core.info(this.build(message, ...optionalParams));
   }
 }
 
