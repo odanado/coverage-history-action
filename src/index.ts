@@ -38,7 +38,9 @@ function getMode(context: Context): string | undefined {
 }
 
 function getBranch(context: Context): string {
-  console.log({ context });
+  if (process.env.GITHUB_HEAD_REF) {
+    return process.env.GITHUB_HEAD_REF;
+  }
   return context.ref.split("/")[2];
 }
 
