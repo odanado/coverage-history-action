@@ -26,7 +26,7 @@ export class CacheRepository implements Repository {
 
     await fs.promises.mkdir(directory, { recursive: true });
 
-    const cache = (await this.loadCoverage(branch)) ?? {};
+    const cache = await this.loadCoverage(branch);
     const data = JSON.stringify({ ...cache, [branch]: value });
     logger.debug(`data: ${data}`);
 
