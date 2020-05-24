@@ -1,4 +1,4 @@
-import core from "@actions/core";
+import { getInput } from "@actions/core";
 import { context, GitHub } from "@actions/github";
 
 import { IstanbulLoader } from "./loader/istanbul.loader";
@@ -18,7 +18,7 @@ function loadInputs(): Inputs {
   return {
     COVERAGE_DIR: "coverage",
     TARGET: "master",
-    GITHUB_TOKEN: core.getInput("github-token"),
+    GITHUB_TOKEN: getInput("github-token"),
   };
 }
 
