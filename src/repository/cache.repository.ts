@@ -12,7 +12,9 @@ export class CacheRepository implements Repository {
   }
 
   private getfileName(branch: string): string {
-    logger.debug(`filename, ${{ directory: this.getDirectory(), branch }}`);
+    logger.debug(
+      `filename, ${JSON.stringify({ directory: this.getDirectory(), branch })}`
+    );
     return path.join(this.getDirectory(), `${branch}.json`);
   }
 
@@ -24,7 +26,7 @@ export class CacheRepository implements Repository {
   async save(branch: string, value: unknown): Promise<void> {
     const directory = this.getDirectory();
     const key = this.getKey();
-    logger.debug(`save ${{ branch, key, directory }}`);
+    logger.debug(`save ${JSON.stringify({ branch, key, directory })}`);
 
     await fs.promises.mkdir(directory, { recursive: true });
 
@@ -38,7 +40,7 @@ export class CacheRepository implements Repository {
   async load(branch: string): Promise<unknown> {
     const key = this.getKey();
     const directory = this.getDirectory();
-    logger.debug(`load ${{ branch, key, directory }}`);
+    logger.debug(`load ${JSON.stringify({ branch, key, directory })}`);
 
     const cacheHit = restoreCache([directory], key, [key]);
 
