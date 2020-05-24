@@ -63,6 +63,7 @@ async function main(): Promise<void> {
       await storeUsecase.storeCoverage(currentBranch);
       break;
     case "report":
+      await storeUsecase.storeCoverage(currentBranch);
       await reportUsecase.report(inputs.TARGET, currentBranch);
       break;
   }
