@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { saveCache, restoreCache } from "@actions/cache";
 
+import { logger } from "../logger";
 import { CoverageResult } from "../type";
 import { Repository } from "./index";
 
@@ -11,7 +12,7 @@ export class CacheRepository implements Repository {
   }
 
   private getfileName(branch: string): string {
-    console.log("filename", this.getDirectory(), branch);
+    logger.debug(`filename, ${{ directory: this.getDirectory(), branch }}`);
     return path.join(this.getDirectory(), `${branch}.json`);
   }
 
@@ -23,6 +24,7 @@ export class CacheRepository implements Repository {
   async save(branch: string, value: unknown): Promise<void> {
     const directory = this.getDirectory();
     const key = this.getKey();
+    logger.debug(`save ${{ branch, key, directory }}`);
 
     await fs.promises.mkdir(directory, { recursive: true });
 
@@ -36,7 +38,7 @@ export class CacheRepository implements Repository {
   async load(branch: string): Promise<unknown> {
     const key = this.getKey();
     const directory = this.getDirectory();
-    console.log("load", branch, key, directory);
+    logger.debug(`load ${{ branch, key, directory }}`);
 
     const cacheHit = restoreCache([directory], key, [key]);
 
@@ -45,10 +47,9 @@ export class CacheRepository implements Repository {
     }
 
     const fileName = this.getfileName(branch);
-    console.log(await fs.promises.readdir(this.getDirectory()));
+    logger.debug((await fs.promises.readdir(this.getDirectory())).join("\n"));
     const value = await fs.promises.readFile(fileName, { encoding: "utf8" });
 
-    console.log("load", key, value);
     try {
       return JSON.parse(value);
     } catch {
