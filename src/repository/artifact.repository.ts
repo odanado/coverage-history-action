@@ -28,7 +28,11 @@ export class ArtifactRepository implements Repository {
     return key;
   }
 
-  async save(branch: string, value: unknown): Promise<void> {
+  async save(
+    branch: string,
+    value: unknown,
+    cache: CoverageResult | undefined
+  ): Promise<void> {
     const directory = this.getDirectory();
     const key = this.getKey();
     const fileName = this.getfileName();
@@ -36,7 +40,6 @@ export class ArtifactRepository implements Repository {
 
     await fs.promises.mkdir(directory, { recursive: true });
 
-    const cache = await this.loadCoverage(branch);
     const data = JSON.stringify({ ...cache, [branch]: value });
     logger.debug(`data: ${data}`);
 
@@ -70,13 +73,14 @@ export class ArtifactRepository implements Repository {
   }
 
   async saveCoverage(branch: string, value: CoverageResult): Promise<void> {
-    await this.save(branch, value);
+    const cache = await this.loadCoverage(branch);
+    await this.save(branch, value, cache);
 
     await this.loadCoverage(branch);
   }
   async loadCoverage(branch: string): Promise<CoverageResult | undefined> {
     const value = await this.load(branch).catch((e) => {
-      logger.debug(e);
+      logger.debug(`load error: branch ${branch}. ${JSON.stringify(e)}`);
       return undefined;
     });
     if (value) {
