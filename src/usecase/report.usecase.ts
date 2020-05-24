@@ -16,6 +16,9 @@ export class ReportUsecase {
     const targetCoverage = await this.repository.loadCoverage(targetBranch);
     const currentCoverage = await this.repository.loadCoverage(currentBranch);
 
+    if (!targetCoverage) return;
+    if (!currentCoverage) return;
+
     const report = await this.reporter.report(targetCoverage, currentCoverage);
 
     const commitCommentParams = {
