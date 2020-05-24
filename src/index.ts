@@ -38,6 +38,7 @@ function getMode(context: Context): string | undefined {
 }
 
 function getBranch(context: Context): string {
+  console.log({ context });
   return context.ref.split("/")[2];
 }
 
