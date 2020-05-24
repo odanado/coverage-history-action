@@ -1,26 +1,19 @@
 import fs from "fs";
 import path from "path";
-import os from "os";
 
-import { create, ArtifactClient } from "@actions/artifact";
+import { restoreCache, saveCache } from "@actions/cache";
 
 import { logger } from "../logger";
 import { CoverageResult } from "../type";
 import { Repository } from "./index";
 
 export class ArtifactRepository implements Repository {
-  private readonly artifactClient: ArtifactClient;
-
-  constructor() {
-    this.artifactClient = create();
-  }
-
   private getDirectory(): string {
     return ".coverage-history";
   }
 
-  private getfileName(): string {
-    return "coverage-history.json";
+  private getFileName(): string {
+    return path.join(this.getDirectory(), "coverage-history.json");
   }
 
   private getKey(): string {
@@ -35,8 +28,10 @@ export class ArtifactRepository implements Repository {
   ): Promise<void> {
     const directory = this.getDirectory();
     const key = this.getKey();
-    const fileName = this.getfileName();
-    logger.debug(`save ${JSON.stringify({ branch, key, directory })}`);
+    const fileName = this.getFileName();
+    logger.debug(
+      `save ${JSON.stringify({ branch, key, directory, fileName })}`
+    );
 
     await fs.promises.mkdir(directory, { recursive: true });
 
@@ -45,29 +40,29 @@ export class ArtifactRepository implements Repository {
 
     fs.promises.writeFile(fileName, data);
 
-    await this.artifactClient.uploadArtifact(key, [fileName], process.cwd());
+    const runId = process.env.GITHUB_RUN_ID;
+    saveCache([fileName], `${key}-${runId}`);
   }
 
   async load(branch: string): Promise<unknown> {
     const key = this.getKey();
     const directory = this.getDirectory();
-    logger.debug(`load ${JSON.stringify({ branch, key, directory })}`);
-
-    console.log(await this.artifactClient.downloadAllArtifacts());
-    const { downloadPath } = await this.artifactClient.downloadArtifact(
-      key,
-      os.tmpdir()
+    const fileName = this.getFileName();
+    logger.debug(
+      `load ${JSON.stringify({ branch, key, directory, fileName })}`
     );
 
-    logger.debug(`${JSON.stringify({ downloadPath })}`);
-    const fileName = path.join(downloadPath, this.getfileName());
+    const cacheHit = restoreCache([fileName], key, [key]);
 
+    logger.debug(`cacheHit ${JSON.stringify({ cacheHit })}`);
+
+    if (!cacheHit) return;
     const value = await fs.promises.readFile(fileName, {
       encoding: "utf8",
     });
 
     try {
-      return JSON.parse(value);
+      return JSON.parse(value)[branch];
     } catch {
       return undefined;
     }
