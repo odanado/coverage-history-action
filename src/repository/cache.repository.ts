@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { saveCache, restoreCache } from "@actions/cache";
-import { context } from "@actions/github";
 
 import { CoverageResult } from "../type";
 import { Repository } from "./index";
@@ -12,6 +11,7 @@ export class CacheRepository implements Repository {
   }
 
   private getfileName(branch: string): string {
+    console.log("filename", this.getDirectory(), branch);
     return path.join(this.getDirectory(), `${branch}.json`);
   }
 
@@ -34,6 +34,7 @@ export class CacheRepository implements Repository {
   }
 
   async load(branch: string): Promise<unknown> {
+    console.log("load", branch);
     const key = this.getKey(branch);
     const directory = this.getDirectory();
 
@@ -55,12 +56,10 @@ export class CacheRepository implements Repository {
   }
 
   async saveCoverage(branch: string, value: CoverageResult): Promise<void> {
-    const key = this.getKey(branch);
-    await this.save(key, value);
+    await this.save(branch, value);
   }
   async loadCoverage(branch: string): Promise<CoverageResult | undefined> {
-    const key = this.getKey(branch);
-    const value = await this.load(key);
+    const value = await this.load(branch);
     if (value) {
       return value as CoverageResult;
     }

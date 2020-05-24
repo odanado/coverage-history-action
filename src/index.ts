@@ -37,10 +37,14 @@ function getMode(context: Context): string | undefined {
 }
 
 function getBranch(context: Context): string {
+  if (process.env.GITHUB_HEAD_REF) {
+    return process.env.GITHUB_HEAD_REF;
+  }
   return context.ref.split("/")[2];
 }
 
 async function main(): Promise<void> {
+  console.log("env", process.env);
   const inputs = loadInputs();
   const loader = new IstanbulLoader(inputs.COVERAGE_DIR);
   const repository = new CacheRepository();
@@ -59,6 +63,7 @@ async function main(): Promise<void> {
       await storeUsecase.storeCoverage(currentBranch);
       break;
     case "report":
+      await storeUsecase.storeCoverage(currentBranch);
       await reportUsecase.report(inputs.TARGET, currentBranch);
       break;
   }
