@@ -1,4 +1,7 @@
 import fs from "fs";
+import path from "path";
+import os from "os";
+
 import { create, ArtifactClient } from "@actions/artifact";
 
 import { logger } from "../logger";
@@ -47,11 +50,15 @@ export class ArtifactRepository implements Repository {
     const directory = this.getDirectory();
     logger.debug(`load ${JSON.stringify({ branch, key, directory })}`);
 
-    const { downloadPath } = await this.artifactClient.downloadArtifact(key);
+    const { downloadPath } = await this.artifactClient.downloadArtifact(
+      key,
+      os.tmpdir()
+    );
 
     logger.debug(`${JSON.stringify({ downloadPath })}`);
+    const fileName = path.join(downloadPath, this.getfileName());
 
-    const value = await fs.promises.readFile(downloadPath, {
+    const value = await fs.promises.readFile(fileName, {
       encoding: "utf8",
     });
 
