@@ -53,6 +53,7 @@ export class ArtifactRepository implements Repository {
     const directory = this.getDirectory();
     logger.debug(`load ${JSON.stringify({ branch, key, directory })}`);
 
+    console.log(await this.artifactClient.downloadAllArtifacts());
     const { downloadPath } = await this.artifactClient.downloadArtifact(
       key,
       os.tmpdir()
