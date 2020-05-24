@@ -15,14 +15,14 @@ export class CacheRepository implements Repository {
     return path.join(this.getDirectory(), `${branch}.json`);
   }
 
-  private getKey(branch: string): string {
-    const key = ["coverage-history-action", branch, "coverage"].join(":");
+  private getKey(): string {
+    const key = ["coverage-history-action", "coverage"].join(":");
     return key;
   }
 
   async save(branch: string, value: unknown): Promise<void> {
     const directory = this.getDirectory();
-    const key = this.getKey(branch);
+    const key = this.getKey();
 
     await fs.promises.mkdir(directory, { recursive: true });
 
@@ -35,7 +35,7 @@ export class CacheRepository implements Repository {
 
   async load(branch: string): Promise<unknown> {
     console.log("load", branch);
-    const key = this.getKey(branch);
+    const key = this.getKey();
     const directory = this.getDirectory();
 
     const cacheHit = restoreCache([directory], key, [key]);
