@@ -28,7 +28,6 @@ function loadInputs(): Inputs {
 }
 
 function getMode(context: Context): string | undefined {
-  console.log("eventName", context.eventName);
   if (context.eventName === "pull_request") {
     return "report";
   }
