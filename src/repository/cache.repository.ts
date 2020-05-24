@@ -45,6 +45,7 @@ export class CacheRepository implements Repository {
     }
 
     const fileName = this.getfileName(branch);
+    console.log(await fs.promises.readdir(this.getDirectory()));
     const value = await fs.promises.readFile(fileName, { encoding: "utf8" });
 
     console.log("load", key, value);
