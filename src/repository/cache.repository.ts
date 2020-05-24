@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import { saveCache, restoreCache } from "@actions/cache";
 
 import { logger } from "../logger";
@@ -11,15 +10,12 @@ export class CacheRepository implements Repository {
     return ".coverage-history";
   }
 
-  private getfileName(branch: string): string {
-    logger.debug(
-      `filename, ${JSON.stringify({ directory: this.getDirectory(), branch })}`
-    );
-    return path.join(this.getDirectory(), `${branch}.json`);
+  private getfileName(): string {
+    return "coverage-history.json";
   }
 
   private getKey(): string {
-    const key = ["coverage-history-action", "coverage"].join(":");
+    const key = ["coverage-history-action", "directory"].join(":");
     return key;
   }
 
@@ -30,7 +26,11 @@ export class CacheRepository implements Repository {
 
     await fs.promises.mkdir(directory, { recursive: true });
 
-    fs.promises.writeFile(this.getfileName(branch), JSON.stringify(value));
+    const cache = await this.loadCoverage(branch);
+    const data = JSON.stringify({ ...cache, [branch]: value });
+    logger.debug(`data: ${data}`);
+
+    fs.promises.writeFile(this.getfileName(), data);
 
     const runId = process.env.GITHUB_RUN_ID;
 
@@ -48,7 +48,7 @@ export class CacheRepository implements Repository {
       return undefined;
     }
 
-    const fileName = this.getfileName(branch);
+    const fileName = this.getfileName();
     logger.debug((await fs.promises.readdir(this.getDirectory())).join("\n"));
     const value = await fs.promises.readFile(fileName, { encoding: "utf8" });
 
@@ -63,7 +63,10 @@ export class CacheRepository implements Repository {
     await this.save(branch, value);
   }
   async loadCoverage(branch: string): Promise<CoverageResult | undefined> {
-    const value = await this.load(branch);
+    const value = await this.load(branch).catch((e) => {
+      logger.debug(e);
+      return undefined;
+    });
     if (value) {
       return value as CoverageResult;
     }
