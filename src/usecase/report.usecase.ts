@@ -13,6 +13,7 @@ export class ReportUsecase {
   }
 
   async report(targetBranch: string, currentBranch: string): Promise<void> {
+    console.log("report", { targetBranch, currentBranch });
     const targetCoverage = await this.repository.loadCoverage(targetBranch);
     const currentCoverage = await this.repository.loadCoverage(currentBranch);
 
