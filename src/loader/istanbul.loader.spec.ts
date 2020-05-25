@@ -1,48 +1,13 @@
-import fs from "fs";
-import { mocked } from "ts-jest/utils";
-import { IstanbulLoader, IstanbulCoverage } from "./istanbul.loader";
-
-jest.mock("fs", () => ({
-  promises: {
-    readFile: jest.fn(),
-  },
-}));
+import { IstanbulLoader } from "./istanbul.loader";
 
 describe("IstanbulLoader", () => {
-  const loader = new IstanbulLoader("");
+  const loader = new IstanbulLoader("./fixture");
   it("ok", async () => {
-    const mock = ({
-      fileA: {
-        s: {
-          "0": 1,
-          "1": 1,
-          "2": 1,
-        },
-      },
-      fileB: {
-        s: {
-          "0": 0,
-          "1": 0,
-          "2": 1,
-        },
-      },
-    } as unknown) as IstanbulCoverage;
-
-    mocked(fs.promises.readFile).mockResolvedValue(JSON.stringify(mock));
     const coverage = await loader.load();
 
     expect(coverage.statement).toBeDefined();
-    expect(coverage.statement.total).toBeCloseTo(4 / 6);
-
-    const fileA = coverage.statement.paths.find((x) => x.path === "fileA");
-    const fileB = coverage.statement.paths.find((x) => x.path === "fileB");
-
-    if (!fileA || !fileB) {
-      expect(true).toBe(false);
-      return;
-    }
-
-    expect(fileA.value).toBeCloseTo(1);
-    expect(fileB.value).toBeCloseTo(1 / 3);
+    expect(coverage.statement.total).toBeCloseTo(0.3732);
+    expect(coverage.branch.total).toBeCloseTo(0.0417);
+    expect(coverage.function.total).toBeCloseTo(0.359);
   });
 });

@@ -8,6 +8,6 @@ export interface Coverage {
 
 export interface CoverageSet {
   statement: Coverage;
-  // branch: Coverage;
-  // function: Coverage;
+  branch: Coverage;
+  function: Coverage;
 }
