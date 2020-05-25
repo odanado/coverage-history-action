@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { Loader } from "./index";
-import { Coverage, CoverageResult } from "../type";
+import { Coverage, CoverageSet } from "../type";
 export interface Position {
   line: number;
   column: number;
@@ -87,7 +87,7 @@ export class IstanbulLoader implements Loader {
       paths: summary,
     };
   }
-  async load(): Promise<CoverageResult> {
+  async load(): Promise<CoverageSet> {
     const file = path.join(this.coverageDir, "coverage-final.json");
     const data = await fs.promises.readFile(file, { encoding: "utf8" });
     const coverage: IstanbulCoverage = JSON.parse(data);

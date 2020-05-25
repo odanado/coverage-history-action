@@ -1,8 +1,8 @@
-import { CoverageResult } from "../type";
+import { CoverageSet } from "../type";
 
 export interface Reporter {
   report(
-    targetCoverage: CoverageResult,
-    currentCoverage: CoverageResult
+    targetCoverage: CoverageSet,
+    currentCoverage: CoverageSet
   ): Promise<string>;
 }

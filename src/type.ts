@@ -6,7 +6,7 @@ export interface Coverage {
   }[];
 }
 
-export interface CoverageResult {
+export interface CoverageSet {
   statement: Coverage;
   // branch: Coverage;
   // function: Coverage;

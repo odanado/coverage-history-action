@@ -1,6 +1,6 @@
-import { CoverageResult } from "../type";
+import { CoverageSet } from "../type";
 
 export interface Repository {
-  saveCoverage(branch: string, value: CoverageResult): Promise<void>;
-  loadCoverage(branch: string): Promise<CoverageResult | undefined>;
+  saveCoverage(branch: string, value: CoverageSet): Promise<void>;
+  loadCoverage(branch: string): Promise<CoverageSet | undefined>;
 }

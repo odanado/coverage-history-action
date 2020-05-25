@@ -1,5 +1,5 @@
-import { CoverageResult } from "../type";
+import { CoverageSet } from "../type";
 
 export interface Loader {
-  load(): Promise<CoverageResult>;
+  load(): Promise<CoverageSet>;
 }
