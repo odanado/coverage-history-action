@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MarkdownReporter report correctly 1`] = `
-"## coverage-history
+"## coverage-history-action
   
 |  | master | feature |
 | - | -: | -: |
