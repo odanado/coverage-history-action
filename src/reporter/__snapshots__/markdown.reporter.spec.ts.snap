@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MarkdownReporter report correctly 1`] = `
+"
+|  | target | current |
+| - | -: | -: |
+|  statement  | 10.00 % | 40.00 % |
+|  branch  | 20.00 % | 50.00 % |
+|  function  | 30.00 % | 60.00 % |"
+`;
