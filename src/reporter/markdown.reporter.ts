@@ -43,7 +43,7 @@ export class MarkdownReporter implements Reporter {
     });
 
     const body = `
-  ## coverage-history
+  ## coverage-history-action
   ${table}
   `.trim();
 
