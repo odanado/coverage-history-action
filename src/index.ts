@@ -3,7 +3,7 @@ import { context, GitHub } from "@actions/github";
 import { Context } from "@actions/github/lib/context";
 
 import { IstanbulLoader } from "./loader/istanbul.loader";
-import { TextReporter } from "./reporter/text.reporter";
+import { MarkdownReporter } from "./reporter/markdown.reporter";
 import { CacheRepository } from "./repository/cache.repository";
 
 import { ReportUsecase } from "./usecase/report.usecase";
@@ -48,12 +48,14 @@ async function main(): Promise<void> {
   const loader = new IstanbulLoader(inputs.COVERAGE_DIR);
   const repository = new CacheRepository();
 
-  const reporter = new TextReporter();
+  const reporter = new MarkdownReporter();
 
   const client = new GitHub(inputs.GITHUB_TOKEN);
 
   const reportUsecase = new ReportUsecase(loader, reporter, repository, client);
   const storeUsecase = new StoreUsecase(loader, repository);
+
+  const currentBranch = getBranch(context);
 
   const mode = getMode(context);
   switch (mode) {
@@ -61,7 +63,7 @@ async function main(): Promise<void> {
       await storeUsecase.storeCoverage(inputs.TARGET);
       break;
     case "report":
-      await reportUsecase.report(inputs.TARGET);
+      await reportUsecase.report(inputs.TARGET, currentBranch);
       break;
   }
 }
