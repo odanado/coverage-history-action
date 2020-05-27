@@ -42,6 +42,11 @@ export class MarkdownReporter implements Reporter {
       currentFunction: `${this.format(current.coverage.function.total)} %`,
     });
 
-    return Promise.resolve(table);
+    const body = `
+  ## coverage-history
+  ${table}
+  `.trim();
+
+    return Promise.resolve(body);
   }
 }
