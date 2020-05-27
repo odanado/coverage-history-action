@@ -20,18 +20,17 @@ export class ReportUsecase {
     this.client = client;
   }
 
-  async report(targetBranch: string): Promise<void> {
-    console.log("report", { targetBranch });
+  async report(targetBranch: string, currentBranch: string): Promise<void> {
     const targetCoverage = await this.repository.loadCoverage(targetBranch);
     const currentCoverage = await this.loader.load();
-
-    console.log({ targetCoverage });
-    console.log({ currentCoverage });
 
     if (!targetCoverage) return;
     if (!currentCoverage) return;
 
-    const report = await this.reporter.report(targetCoverage, currentCoverage);
+    const report = await this.reporter.report(
+      { branch: targetBranch, coverage: targetCoverage },
+      { branch: currentBranch, coverage: currentCoverage }
+    );
 
     await this.client.issues.createComment({
       // eslint-disable-next-line @typescript-eslint/camelcase

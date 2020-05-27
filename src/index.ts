@@ -55,13 +55,15 @@ async function main(): Promise<void> {
   const reportUsecase = new ReportUsecase(loader, reporter, repository, client);
   const storeUsecase = new StoreUsecase(loader, repository);
 
+  const currentBranch = getBranch(context);
+
   const mode = getMode(context);
   switch (mode) {
     case "store":
       await storeUsecase.storeCoverage(inputs.TARGET);
       break;
     case "report":
-      await reportUsecase.report(inputs.TARGET);
+      await reportUsecase.report(inputs.TARGET, currentBranch);
       break;
   }
 }

@@ -32,7 +32,10 @@ describe("MarkdownReporter", () => {
   };
   it("report correctly", async () => {
     const reporter = new MarkdownReporter();
-    const report = await reporter.report(target, current);
+    const report = await reporter.report(
+      { branch: "master", coverage: target },
+      { branch: "feature", coverage: current }
+    );
     expect(report).toMatchSnapshot();
   });
 });

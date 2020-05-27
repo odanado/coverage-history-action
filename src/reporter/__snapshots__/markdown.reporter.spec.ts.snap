@@ -2,7 +2,7 @@
 
 exports[`MarkdownReporter report correctly 1`] = `
 "
-|  | target | current |
+|  | master | feature |
 | - | -: | -: |
 |  statement  | 10.00 % | 40.00 % |
 |  branch  | 20.00 % | 50.00 % |

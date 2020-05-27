@@ -11,3 +11,8 @@ export interface CoverageSet {
   branch: Coverage;
   function: Coverage;
 }
+
+export interface BranchCoverage {
+  branch: string;
+  coverage: CoverageSet;
+}
