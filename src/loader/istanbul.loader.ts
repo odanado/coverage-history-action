@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { Loader } from "./index";
-import { Coverage, CoverageResult } from "../type";
+import { Coverage, CoverageSet } from "../type";
 export interface Position {
   line: number;
   column: number;
@@ -56,46 +56,66 @@ export class IstanbulLoader implements Loader {
     this.coverageDir = coverageDir;
   }
 
-  // TODO: 別ファイル？
-  calcStatementCoverage(coverage: IstanbulCoverage): Coverage {
+  private calcFileCoverage(
+    fileCoverage:
+      | IstanbulCoverage[string]["s"]
+      | IstanbulCoverage[string]["b"]
+      | IstanbulCoverage[string]["f"]
+  ): number {
+    const indexes = Object.keys(fileCoverage);
+    const flatCoverage = indexes.reduce<number[]>((prev, cur) => {
+      return prev.concat(fileCoverage[cur]);
+    }, []);
+
+    if (flatCoverage.length === 0) return 0;
+    return flatCoverage.filter((x) => x > 0).length / flatCoverage.length;
+  }
+
+  private calcTotalCoverage(
+    coverage: IstanbulCoverage,
+    key: "s" | "b" | "f"
+  ): number {
     const paths = Object.keys(coverage);
-    const sumList = paths.map((path) => {
-      return Object.values(coverage[path].s).reduce(
-        (prev, cur) => {
-          if (cur > 0) {
-            return [prev[0] + 1, prev[1] + 1];
-          }
-          return [prev[0], prev[1] + 1];
-        },
-        [0, 0]
-      );
+    const total = paths
+      .map((path) => {
+        return Object.values(coverage[path][key]);
+      })
+      .flat(2);
+
+    //if (total.length == 0) return 0;
+    return total.filter((x) => x > 0).length / total.length;
+  }
+
+  private calcCoverage(
+    coverage: IstanbulCoverage,
+    key: "s" | "b" | "f"
+  ): Coverage {
+    const paths = Object.keys(coverage);
+
+    const summary = paths.map((path) => {
+      return { path, value: this.calcFileCoverage(coverage[path][key]) };
     });
 
-    const summary = paths.map((path, i) => {
-      return { path, value: sumList[i][0] / sumList[i][1] };
-    });
-
-    const total = sumList.reduce(
-      (prev, cur) => {
-        return [prev[0] + cur[0], prev[1] + cur[1]];
-      },
-      [0, 0]
-    );
-
+    const total = this.calcTotalCoverage(coverage, key);
     return {
-      total: total[0] / total[1],
+      total,
       paths: summary,
     };
   }
-  async load(): Promise<CoverageResult> {
+
+  async load(): Promise<CoverageSet> {
     const file = path.join(this.coverageDir, "coverage-final.json");
     const data = await fs.promises.readFile(file, { encoding: "utf8" });
     const coverage: IstanbulCoverage = JSON.parse(data);
 
-    const statementCoverage = this.calcStatementCoverage(coverage);
+    const statementCoverage = this.calcCoverage(coverage, "s");
+    const branchCoverage = this.calcCoverage(coverage, "b");
+    const functionCoverage = this.calcCoverage(coverage, "f");
 
     return {
       statement: statementCoverage,
+      branch: branchCoverage,
+      function: functionCoverage,
     };
   }
 }
