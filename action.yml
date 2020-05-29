@@ -1,0 +1,8 @@
+name: 'Coverage History GitHub Actions'
+description: 'show coverage history on a comment of pull-request'
+
+author: odanado
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
