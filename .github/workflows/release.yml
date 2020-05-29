@@ -1,0 +1,14 @@
+on: create
+
+name: Release
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release GitHub Actions
+        uses: technote-space/release-github-actions@v6
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TEST_TAG_PREFIX: test/
