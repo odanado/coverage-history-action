@@ -1,4 +1,4 @@
-name: 'Coverage History GitHub Actions'
+name: 'Coverage History Action'
 description: 'show coverage history on a comment of pull-request'
 
 author: odanado
