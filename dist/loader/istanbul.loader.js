@@ -26,7 +26,8 @@ class IstanbulLoader {
             return Object.values(coverage[path][key]);
         })
             .flat(2);
-        //if (total.length == 0) return 0;
+        if (total.length == 0)
+            return 0;
         return total.filter((x) => x > 0).length / total.length;
     }
     calcCoverage(coverage, key) {
