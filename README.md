@@ -8,7 +8,7 @@ This GitHub Actions notice coverage history in pull request comments.
 
 
 # Usage
-```yaml
+```yml
 name: coverage-history
 
 
