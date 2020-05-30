@@ -82,7 +82,7 @@ export class IstanbulLoader implements Loader {
       })
       .flat(2);
 
-    //if (total.length == 0) return 0;
+    if (total.length == 0) return 0;
     return total.filter((x) => x > 0).length / total.length;
   }
 
