@@ -9,13 +9,13 @@ This GitHub Actions notice coverage history in pull request comments.
 
 # Usage
 ```yml
-name: coverage-history
+name: CI
 
 
 on:
   push:
     branches:
-      - "**"
+      - "master"
   pull_request:
     types: [opened, synchronize]
 
