@@ -1,1 +1,1 @@
-# coverage-history-action
+# Coverage History Action
